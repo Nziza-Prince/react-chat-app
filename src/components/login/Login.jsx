@@ -67,6 +67,7 @@ const Login = () => {
     const {email,password } = Object.fromEntries(formData);
     try{
       const res = await signInWithEmailAndPassword(auth,email,password)
+      toast.success("Account exists in the database!")
     }
     catch (err){
       toast.error(err.message)
@@ -75,7 +76,6 @@ const Login = () => {
       setLoadingSignIn(false)
     }
     
-    toast.success("Logged In successfully!")
  };
 
   return (
