@@ -1,0 +1,66 @@
+.chatlist {
+  display: flex;
+  justify-content: space-between;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+.searchbar {
+  height: 30px;
+  width: 300px;
+  flex: 1;
+  background-color: rgba(17, 25, 40, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 7px;
+  padding: 2px;
+}
+.search .searchbar input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  flex: 1;
+}
+.search .searchbar img {
+  width: 20px;
+  height: 20px;
+}
+.add img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.chats {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  border-bottom: 1px solid #dddddd35;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.chats img{
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+
+}
+.chats .messages{
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+
+}
+.chats .messages p{
+    font-weight: 300;
+}
+.chats .messages span{
+   font-weight: 500;
+}
