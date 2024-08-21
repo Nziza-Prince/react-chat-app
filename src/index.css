@@ -6,7 +6,7 @@
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 body{
-  background: url("./bg.jpg");
+  background: url("./assets/bg.jpg");
   display:flex;
   align-items: center;
   justify-content: center;
