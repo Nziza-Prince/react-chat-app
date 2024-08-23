@@ -69,6 +69,23 @@
     width: 1px;
     background-color: #dddddd35;
 }
+.item form .password{
+    background-color: rgba(17,25,40,0.6);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 4px;
+    
+}
+.item form .password input{
+    width: 216px;
+    background: transparent;
+    border-radius: none;
+}
+#eye:hover{
+  cursor: pointer;
+}
 /* Add this to your login.css */
 .spinner {
     border: 4px solid rgba(255, 255, 255, 0.3);

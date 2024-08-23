@@ -5,14 +5,21 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { auth, db } from "../../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import upload from "../../lib/upload";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [loadingSignIn, setLoadingSignIn] = useState(false);
   const [loadingSignUp, setLoadingSignUp] = useState(false);
+  const [passwordVisible,setPasswordVisible] = useState(false)
   const [avatar, setAvatar] = useState({
     file: null,
     url: "",
   });
+
+  const showPassword = (e)=>{
+    setPasswordVisible(!passwordVisible)
+  }
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -67,19 +74,21 @@ const Login = () => {
       toast.success("Login successful!");
     } catch (err) {
       console.error("Error during login:", err);
-      toast.error(err.message);
+      toast.error("Invalid credentials");
     } finally {
       setLoadingSignIn(false);
     }
   };
-
-  return (
+return (
     <div className="login">
       <div className="item">
         <h2>Welcome back</h2>
         <form onSubmit={handleLogin}>
           <input type="email" placeholder="Email" name="email" required />
-          <input type="password" placeholder="Password" name="password" required />
+          <div className="password">
+           <input type={passwordVisible ? 'text':'password'} placeholder="Password" name="password" required />
+           {passwordVisible ? <FaEyeSlash id="eye" onClick={()=>setPasswordVisible(false)}/>:<FaEye id="eye" onClick={()=>setPasswordVisible(true)}/>}
+          </div>
           <button disabled={loadingSignIn}>
             {loadingSignIn ? <div className="spinner"></div> : "Sign In"}
           </button>
@@ -102,8 +111,11 @@ const Login = () => {
           />
           <input type="text" placeholder="Username" name="username" required />
           <input type="email" placeholder="Email" name="email" required />
-          <input type="password" placeholder="Password" name="password" required />
-          <button disabled={loadingSignUp}>
+          <div className="password">
+           <input type={passwordVisible ? 'text':'password'} placeholder="Password" name="password" required />
+        {passwordVisible ? <FaEyeSlash id="eye" onClick={()=>setPasswordVisible(false)}/>:<FaEye id="eye" onClick={()=>setPasswordVisible(true)}/>}
+          </div>
+         <button disabled={loadingSignUp}>
             {loadingSignUp ? <div className="spinner"></div> : "Sign Up"}
           </button>
         </form>
