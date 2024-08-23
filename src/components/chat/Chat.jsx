@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./chat.css";
-import EmojiPicker, { Emoji } from "emoji-picker-react";
+import EmojiPicker from "emoji-picker-react";
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
@@ -10,14 +10,11 @@ import upload from "../../lib/upload";
 const Chat = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [text, setText] = useState("");
-  const [chats, setChats] = useState(null); // Initialize as null to handle initial loading state
-  const { chatId,user,isCurrentUserBlocked,isReciverBlocked} = useChatStore();
-  const {currentUser} = useUserStore()
+  const [chats, setChats] = useState(null);
+  const { chatId, user, isCurrentUserBlocked, isReciverBlocked } = useChatStore();
+  const { currentUser } = useUserStore();
   const endRef = useRef(null);
-  const [img,setImg] = useState({
-    file:null,
-    url:""
-  })
+  const [img, setImg] = useState({ file: null, url: "" });
 
   const handleEmoji = (e) => {
     setText((prev) => prev + e.emoji);
@@ -31,70 +28,70 @@ const Chat = () => {
       });
     }
   };
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
 
   useEffect(() => {
     if (!chatId) return;
-    
+
     const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
-      setChats(res.data()); // Assuming res.data() is an object that contains a messages array
+      setChats(res.data());
     });
 
     return () => {
       unSub();
     };
   }, [chatId]);
-  const handleSend =async()=>{
-    if(text === "")return
-    let imgUrl = null
-    try{
 
-     if(img.file){
-      imgUrl = await upload(img.file)
-     }
+  const handleSend = async () => {
+    if (text === "") return;
+    let imgUrl = null;
+    try {
+      if (img.file) {
+        imgUrl = await upload(img.file);
+      }
 
-     
-      await updateDoc(doc(db,"chats",chatId),{
-        messages:arrayUnion({
-          senderId:currentUser.id,
+      await updateDoc(doc(db, "chats", chatId), {
+        messages: arrayUnion({
+          senderId: currentUser.id,
           text,
-          createdAt:new Date(),
-          ...(imgUrl && {img:imgUrl})
-        }) 
-      })
+          createdAt: new Date(),
+          ...(imgUrl && { img: imgUrl }),
+        }),
+      });
 
-      const userIDs = [currentUser.id,user.id]
-      userIDs.forEach(async(id)=>{
+      const userIDs = [currentUser.id, user.id];
+      userIDs.forEach(async (id) => {
+        const userChatsRef = doc(db, "userChats", id);
+        const userChatsSnapshot = await getDoc(userChatsRef);
 
-        const userChatsRef = doc(db,"userChats", id)
-        const userChatsSnapshot = await getDoc(userChatsRef)
-        
-        if(userChatsSnapshot.exists()){
-          const userChatsData = userChatsSnapshot.data()
-          const chatIndex = userChatsData.chats.findIndex(c=>c.chatId === chatId)
-          userChatsData.chats[chatIndex].lastMessage = text
-          userChatsData.chats[chatIndex].isSeen = id === currentUser.id?true:false
-          userChatsData.chats[chatIndex].updatedAt = Date.now()
-          
-          await updateDoc(userChatsRef,{
-            chats:userChatsData.chats,
-            
-          })
+        if (userChatsSnapshot.exists()) {
+          const userChatsData = userChatsSnapshot.data();
+          const chatIndex = userChatsData.chats.findIndex((c) => c.chatId === chatId);
+          userChatsData.chats[chatIndex].lastMessage = text;
+          userChatsData.chats[chatIndex].isSeen = id === currentUser.id ? true : false;
+          userChatsData.chats[chatIndex].updatedAt = Date.now();
+
+          await updateDoc(userChatsRef, {
+            chats: userChatsData.chats,
+          });
         }
-      })
-
-    }catch(err){
-      console.log(err)
+      });
+    } catch (err) {
+      console.log(err);
     }
-    setImg({
-      file:null,
-      url:""
-    })
-    setText("")
-  }
+    setImg({ file: null, url: "" });
+    setText("");
+  };
 
+  const formatDate = (date) => {
+    return date.toLocaleString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <div className="chat">
@@ -103,9 +100,7 @@ const Chat = () => {
           <img src={user?.avatar || "avatar.png"} alt="" />
           <div className="texts">
             <span>{user?.username}</span>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non,
-             </p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non,</p>
           </div>
         </div>
         <div className="icons">
@@ -115,37 +110,35 @@ const Chat = () => {
         </div>
       </div>
       <div className="center">
-      {chats?.messages?.map((message, index) => {
-  const messageDate = message.createdAt?.toDate(); // Convert to JavaScript Date
-  const formattedDate = messageDate?.toLocaleString(); // Format as a human-readable string
+        {chats?.messages?.map((message, index, arr) => {
+          const messageDate = message.createdAt?.toDate();
+          const showTime = index === arr.length - 1 || 
+                           formatDate(messageDate) !== formatDate(arr[index + 1]?.createdAt?.toDate());
 
-  return (
-    <div className={message.senderId === currentUser?.id ? "message own" : "message"} key={index}>
-      <div className="texts">
-        {message.img && <img src={message.img}/>}
-        <p>{message.text}</p>
-        <span>{formattedDate}</span> {/* Render the formatted date */}
-      </div>
-    </div>
-  );
-})}
-{img.url && 
-<div className="message own">
-  <div className="texts">
-     <img src={img.url} alt="" />
-  </div>
-</div>
-
-}
+          return (
+            <div className={message.senderId === currentUser?.id ? "message own" : "message"} key={index}>
+              <div className="texts">
+                {message.img && <img src={message.img} alt="" />}
+                <p>{message.text}</p>
+                {showTime && <span className="time">{formatDate(messageDate)}</span>}
+              </div>
+            </div>
+          );
+        })}
+        {img.url && 
+        <div className="message own">
+          <div className="texts">
+            <img src={img.url} alt="" />
+          </div>
+        </div>}
         <div ref={endRef}></div>
       </div>
       <div className="bottom">
         <div className="icons">
           <label htmlFor="file">
-
-          <img src="./img.png" alt="" />
+            <img src="./img.png" alt="" />
           </label>
-          <input type="file" id="file" style={{display:"none"}} onChange={handleImg}/>
+          <input type="file" id="file" style={{ display: "none" }} onChange={handleImg} />
           <img src="./camera.png" alt="" />
           <img src="./mic.png" alt="" />
         </div>
