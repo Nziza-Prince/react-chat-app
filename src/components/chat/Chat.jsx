@@ -142,12 +142,17 @@ const Chat = () => {
           <img src="./camera.png" alt="" />
           <img src="./mic.png" alt="" />
         </div>
-        <input
-          type="text"
-          placeholder="Type a message..."
-          onChange={(e) => setText(e.target.value)}
-          value={text}
-          disabled={isCurrentUserBlocked || isReciverBlocked}
+        <textarea
+            placeholder="Type a message..."
+            onChange={(e) => setText(e.target.value)}
+            value={text}
+            disabled={isCurrentUserBlocked || isReciverBlocked}
+            className="styled-textarea"
+            rows="1"
+            onInput={(e) => {
+                e.target.style.height = 'auto'; // Reset height
+                e.target.style.height = `${e.target.scrollHeight}px`; // Adjust based on content
+            }}
         />
         <div className="emoji">
           <div className="picker">

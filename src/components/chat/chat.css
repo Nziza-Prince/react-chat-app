@@ -59,6 +59,7 @@
     .texts {
       p {
         background-color: rgb(0, 123, 255);
+        text-wrap: wrap;
       }
     }
   }
@@ -117,10 +118,49 @@
   border-radius: 10px;
   font-size: 16px;
   padding: 20px;
+  box-sizing: border-box; /* Ensures padding is included in width calculation */
+  width: 100%; /* Ensures the input takes the full width available */
+
 
   &:disabled{
     cursor: not-allowed;
   }
+}
+.styled-textarea {
+  flex: 1;
+  background-color: rgba(17, 25, 40, 0.5);
+  border: none;
+  outline: none;
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 20px;
+  box-sizing: border-box; /* Ensure padding is included in width calculation */
+  width: 100%; /* Ensure the textarea takes the full width available */
+  resize: none; /* Prevent manual resizing */
+  overflow: hidden; /* Hide scrollbar */
+  line-height: 1.5;
+  max-height: 100px; /* Set a maximum height to prevent it from growing too long */
+}
+
+.styled-textarea:focus {
+  outline: none;
+}
+
+.styled-textarea:disabled {
+  background-color: rgba(17, 25, 40, 0.3); /* Slightly different color when disabled */
+  color: rgba(255, 255, 255, 0.5); /* Faded text color when disabled */
+}
+
+/* Hide scrollbar */
+.styled-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.styled-textarea {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
 }
 .bottom .sendbtn {
   background-color: #5183fe;
